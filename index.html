@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TURKSOIL LIMITED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #f3f6ff;
+      --muted: #8b94a9;
+      --line: rgba(93, 190, 255, .18);
+      --cyan: #48c9ff;
+      --yellow: #ffd429;
+      --bg: #070b14;
+      --panel: rgba(14, 21, 35, .76);
+      --violet: #9b7cff;
+      --jade-blue: #0d6f78;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(72, 201, 255, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(72, 201, 255, .035) 1px, transparent 1px),
+        radial-gradient(circle at 50% 45%, rgba(40, 190, 185, .22), transparent 33rem),
+        linear-gradient(130deg, #062b35 0%, #084b55 56%, #06333f 100%);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+    .shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; padding: 28px 42px 24px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 24px; z-index: 2; }
+    .brand { color: var(--yellow); font-size: .8rem; letter-spacing: .16em; font-weight: 700; text-shadow: 0 0 18px rgba(255, 212, 41, .3); }
+    .eyebrow { color: var(--muted); font: 500 .68rem 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .header-meta { display: flex; align-items: center; gap: 18px; }
+    .tabs { display: flex; align-items: center; gap: 6px; }
+    .tab { padding: 7px 10px; border: 1px solid rgba(127, 255, 212, .42); color: #7fffd4; background: rgba(127, 255, 212, .08); font: 500 .62rem 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .tab.active { color: #062b35; background: #7fffd4; border-color: #7fffd4; }
+    .map-panel { position: absolute; inset: 10% 28% 13% 28%; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 16px; border: 1px solid rgba(127, 255, 212, .45); background: rgba(4, 35, 46, .94); box-shadow: 0 24px 90px rgba(0, 20, 30, .55); backdrop-filter: blur(16px); z-index: 8; }
+    .map-panel[hidden] { display: none; }
+    .map-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .map-heading h2 { margin: 0; color: #7fffd4; font-size: .92rem; font-weight: 500; letter-spacing: .04em; }
+    .map-heading span { color: var(--muted); font: .58rem 'DM Mono', monospace; }
+    .regional-languages { display: flex; flex-wrap: wrap; gap: 6px; }
+    .regional-language { padding: 5px 7px; border: 1px solid rgba(127, 255, 212, .24); color: #bcefff; background: rgba(8, 67, 78, .5); font: .56rem 'DM Mono', monospace; }
+    .regional-language strong { color: #ffd76a; font-weight: 500; }
+    .map-views { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 260px; }
+    #atekerMap { width: 100%; height: 100%; min-height: 260px; display: block; border: 1px solid rgba(127, 255, 212, .22); clip-path: polygon(4% 12%, 28% 2%, 61% 8%, 94% 4%, 98% 34%, 91% 72%, 67% 96%, 31% 91%, 6% 98%, 1% 62%); }
+    .google-map { width: 100%; height: 100%; min-height: 260px; border: 1px solid rgba(255, 215, 106, .35); filter: saturate(.82) contrast(1.08); }
+    .map-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); font: .58rem/1.4 'DM Mono', monospace; }
+    .contour-info { display: flex; gap: 12px; color: #bcefff; font: .58rem 'DM Mono', monospace; }
+    .spatial-resources { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0 0; border-top: 1px solid rgba(127, 255, 212, .16); }
+    .spatial-resources a { color: #ffd76a; font: .56rem 'DM Mono', monospace; text-decoration: none; }
+    .spatial-resources a:hover { color: #fff1a8; text-decoration: underline; }
+    .population-note { color: var(--muted); font: .56rem 'DM Mono', monospace; }
+    .map-link { color: #ffd76a; text-decoration: none; }
+    .map-link:hover { color: #fff1a8; }
+    .map-close { padding: 5px 8px; }
+    .access-badge { padding: 7px 9px; border: 1px solid rgba(155, 124, 255, .42); color: var(--violet); background: rgba(155, 124, 255, .08); font: 500 .62rem 'DM Mono', monospace; letter-spacing: .08em; }
+    .live { display: flex; align-items: center; gap: 8px; color: var(--cyan); font: 500 .68rem 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
+    main { position: relative; display: grid; place-items: center; min-height: 0; }
+    .title { position: absolute; top: 6%; text-align: center; z-index: 1; pointer-events: none; }
+    h1 { margin: 0; color: var(--yellow); font-size: clamp(2.2rem, 5vw, 4.8rem); line-height: .95; letter-spacing: -.065em; font-weight: 500; text-shadow: 0 0 28px rgba(255, 212, 41, .18); }
+    h1 span { color: var(--yellow); }
+    .subtitle { margin: 16px 0 0; color: var(--muted); font: .7rem 'DM Mono', monospace; letter-spacing: .18em; text-transform: uppercase; }
+    #space { width: min(100%, 980px); height: min(72vh, 700px); display: block; cursor: grab; }
+    #space:active { cursor: grabbing; }
+    .hud { position: absolute; right: 0; bottom: 8%; width: min(280px, 31vw); padding: 20px; border: 1px solid rgba(127, 255, 212, .24); border-top: 2px solid var(--jade-blue); background: linear-gradient(145deg, rgba(5, 57, 66, .9), rgba(4, 35, 46, .78)); box-shadow: 0 18px 60px rgba(0, 26, 35, .38), inset 0 1px rgba(255,255,255,.06); backdrop-filter: blur(18px); }
+    .hud-row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+    .hud-label { color: var(--muted); font: .65rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .hud-value { max-width: 62%; color: var(--cyan); font: 500 .72rem 'DM Mono', monospace; text-align: right; overflow-wrap: anywhere; }
+    .meter { height: 2px; background: rgba(255,255,255,.1); overflow: hidden; margin: 10px 0 18px; }
+    .meter i { display: block; height: 100%; width: 64%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+    .controls { display: flex; gap: 9px; margin-top: 16px; }
+    .payment { position: absolute; left: 0; bottom: 8%; width: min(250px, 25vw); padding: 16px; border: 1px solid rgba(127, 255, 212, .3); border-left: 2px solid var(--jade-blue); background: rgba(5, 57, 66, .78); box-shadow: 0 18px 50px rgba(0, 26, 35, .3); backdrop-filter: blur(16px); }
+    .payment-title { margin: 0 0 12px; color: var(--yellow); font: 500 .68rem 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .payment-note { margin: 0 0 12px; color: var(--muted); font: .62rem/1.45 'DM Mono', monospace; }
+    .payment-form { display: flex; gap: 7px; }
+    .payment-form input { min-width: 0; width: 100%; border: 1px solid rgba(255, 212, 41, .28); color: var(--ink); background: rgba(255, 255, 255, .05); padding: 9px; font: 500 .72rem 'DM Mono', monospace; }
+    .payment-form button { border-color: rgba(255, 212, 41, .45); color: var(--yellow); background: rgba(255, 212, 41, .08); white-space: nowrap; }
+    .payment-status { min-height: 28px; margin: 11px 0 0; color: var(--cyan); font: .6rem/1.4 'DM Mono', monospace; }
+    .toolkit { position: absolute; top: 22%; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: min(390px, 42vw); pointer-events: none; z-index: 2; }
+    .tool-logo { padding: 5px 7px; border: 1px solid rgba(126, 225, 255, .3); color: #bcefff; background: rgba(8, 15, 29, .64); box-shadow: 0 0 14px rgba(72, 201, 255, .08); font: 500 .58rem 'DM Mono', monospace; letter-spacing: .05em; }
+    .tool-logo:nth-child(2n) { color: #ffd76a; border-color: rgba(255, 215, 106, .35); }
+    .tool-logo:nth-child(3n) { color: #ff9db7; border-color: rgba(255, 157, 183, .35); }
+    .web-thumbnail { position: absolute; right: 31%; bottom: 14%; width: 72px; padding: 4px; border: 1px solid rgba(127, 255, 212, .55); background: rgba(4, 43, 52, .78); box-shadow: 0 0 22px rgba(127, 255, 212, .22); transform: rotate(-3deg); z-index: 3; }
+    .web-thumbnail img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; filter: saturate(.92) contrast(1.05); }
+    .web-thumbnail figcaption { padding-top: 4px; color: #7fffd4; font: .48rem 'DM Mono', monospace; text-align: center; letter-spacing: .04em; }
+    .nft-control { display: flex; gap: 7px; align-items: center; margin-top: 10px; }
+    .nft-control button { width: 100%; border-color: rgba(155, 124, 255, .45); color: var(--violet); background: rgba(155, 124, 255, .08); }
+    .nft-control input { display: none; }
+    .customer-modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(3, 6, 13, .72); backdrop-filter: blur(10px); z-index: 10; }
+    .customer-modal[hidden] { display: none; }
+    .customer-card { position: relative; width: min(440px, 100%); padding: 26px; border: 1px solid rgba(255, 212, 41, .4); border-top: 3px solid var(--yellow); background: linear-gradient(145deg, rgba(17, 26, 43, .98), rgba(7, 12, 23, .98)); box-shadow: 0 28px 90px rgba(0, 0, 0, .55); }
+    .modal-close { position: absolute; top: 16px; right: 16px; padding: 5px 8px; color: var(--muted); border-color: rgba(255,255,255,.14); background: transparent; }
+    .modal-close:hover { color: var(--ink); border-color: var(--cyan); background: rgba(72, 201, 255, .08); }
+    .customer-card h2 { margin: 0; color: var(--yellow); font-size: 1.25rem; font-weight: 500; letter-spacing: -.03em; }
+    .customer-card p { margin: 9px 0 20px; color: var(--muted); font: .68rem/1.5 'DM Mono', monospace; }
+    .customer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .customer-field { display: grid; gap: 6px; }
+    .customer-field.full { grid-column: 1 / -1; }
+    .customer-field label { color: var(--muted); font: .62rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .customer-field input, .customer-field select { width: 100%; border: 1px solid rgba(72, 201, 255, .28); color: var(--ink); background: rgba(255, 255, 255, .06); padding: 11px; font: .74rem 'DM Mono', monospace; }
+    .customer-field textarea { width: 100%; min-height: 68px; resize: vertical; border: 1px solid rgba(72, 201, 255, .28); color: var(--ink); background: rgba(255, 255, 255, .06); padding: 11px; font: .74rem/1.4 'DM Mono', monospace; }
+    .customer-field input:focus, .customer-field select:focus { outline: 2px solid rgba(72, 201, 255, .35); outline-offset: 2px; }
+    .customer-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
+    .customer-actions .primary { border-color: var(--yellow); color: #111827; background: var(--yellow); }
+    .customer-actions .primary:hover { color: #111827; background: #ffe67a; }
+    .customer-error { min-height: 17px; margin: 12px 0 0 !important; color: #ff7b8b !important; }
+    button { border: 1px solid rgba(72, 201, 255, .35); color: var(--ink); background: rgba(72, 201, 255, .08); padding: 9px 11px; font: 500 .67rem 'DM Mono', monospace; cursor: pointer; transition: .2s ease; }
+    button:hover, button.active { border-color: var(--cyan); color: var(--cyan); background: rgba(72, 201, 255, .15); }
+    input[type='range'] { width: 100%; accent-color: var(--cyan); cursor: pointer; }
+    footer { display: flex; align-items: end; justify-content: space-between; color: var(--muted); font: .66rem 'DM Mono', monospace; letter-spacing: .05em; }
+    footer strong { color: var(--ink); font-weight: 400; }
+    .legend { display: flex; gap: 16px; }
+    .legend span { display: flex; align-items: center; gap: 7px; }
+    .legend i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+    .legend .node { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+    .legend .edge { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+    @media (max-width: 720px) {
+      .shell { padding: 22px 18px 18px; }
+      header .eyebrow { display: none; }
+      .title { top: 5%; }
+      #space { height: 70vh; }
+      .hud { right: 50%; transform: translateX(50%); bottom: 3%; width: min(330px, calc(100vw - 36px)); }
+      .payment { left: 50%; transform: translateX(-50%); bottom: 39%; width: min(330px, calc(100vw - 36px)); }
+      .customer-grid { grid-template-columns: 1fr; }
+      .customer-field.full { grid-column: auto; }
+      .map-panel { inset: 12% 18px 18%; }
+      .map-views { grid-template-columns: 1fr; overflow-y: auto; }
+      footer { align-items: start; gap: 14px; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">TURKSOIL LIMITED</div>
+      <div class="eyebrow">Temporal geometry laboratory / 07</div>
+      <div class="header-meta"><nav class="tabs" aria-label="Workspace tabs"><button class="tab active" id="atekerTab" type="button">Ateker</button></nav><div class="live">Live projection</div><div class="access-badge">ADMIN RIGHTS / DEMO</div></div>
+    </header>
+    <main>
+      <div class="title">
+        <h1>TURKSOIL <span>LIMITED</span></h1>
+        <p class="subtitle">A 7-dimensional object, seen through time</p>
+      </div>
+      <canvas id="space"></canvas>
+      <div class="toolkit" aria-label="Data science tools">
+        <span class="tool-logo">PYTHON</span>
+        <span class="tool-logo">SQL</span>
+        <span class="tool-logo">PANDAS</span>
+        <span class="tool-logo">NUMPY</span>
+        <span class="tool-logo">SCIKIT-LEARN</span>
+        <span class="tool-logo">JUPYTER</span>
+        <span class="tool-logo">TABLEAU</span>
+        <span class="tool-logo">GIT</span>
+      </div>
+      <section class="map-panel" id="atekerMapPanel" hidden aria-label="Masked Ng'atekera regional map">
+        <div class="map-heading"><h2>Ng'atekera region / masked map</h2><span>3.5 N · 34.0 E</span></div>
+        <div class="regional-languages" id="regionalLanguages" aria-label="Languages spoken in the mapped region"></div>
+        <div class="map-views">
+          <canvas id="atekerMap" aria-label="Generated raster-style map of the Ng'atekera region"></canvas>
+          <iframe class="google-map" title="Google Maps view of the Ng'atekera reference region" src="https://www.google.com/maps?q=3.5,34.0&z=7&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-footer"><span>Masked raster + Google Maps · 3.5 N, 34.0 E</span><span class="contour-info">CONTOUR 100 m · RELIEF 0–980 m</span><a class="map-link" href="https://www.google.com/maps/@3.5,34,7z" target="_blank" rel="noopener">Open Google Maps</a><button class="map-close" id="closeAtekerMap" type="button">Close map</button></div>
+        <div class="population-note">Population layer: indicative settlement-density model · not a live census</div>
+        <div class="spatial-resources"><span>FREE SPATIAL RESOURCES:</span><a href="https://www.isric.org/explore/afsis" target="_blank" rel="noopener">AfSIS soil</a><a href="https://www.earthdata.nasa.gov/" target="_blank" rel="noopener">NASA Earthdata</a><a href="https://dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus</a><a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a></div>
+      </section>
+      <figure class="web-thumbnail">
+        <img src="tesseract_test.png" alt="Loaded profile thumbnail">
+        <figcaption>PROFILE / THUMB</figcaption>
+      </figure>
+      <section class="payment" aria-label="Encrypted payment demo">
+        <h2 class="payment-title">Secure payment intent</h2>
+        <p class="payment-note">Demo only. Amounts are encrypted locally; no payment is charged.</p>
+        <div class="payment-form">
+          <input id="paymentAmount" type="number" min="1" step="0.01" value="25.00" aria-label="Payment amount">
+          <button id="payButton" type="button">Pay</button>
+        </div>
+        <div class="nft-control">
+          <input id="nftResource" type="file" accept="image/*,.json,.glb,.gltf" aria-label="NFT resource file">
+          <button id="loadNftButton" type="button">Load NFT resource</button>
+        </div>
+        <p class="payment-status" id="paymentStatus">AES-GCM ready</p>
+      </section>
+      <div class="customer-modal" id="customerModal" hidden>
+        <form class="customer-card" id="customerForm">
+          <button class="modal-close" id="closeCustomerModal" type="button" aria-label="Close customer details">Close</button>
+          <h2>Customer details</h2>
+          <p>Your details stay in this browser and are included only in the encrypted demo intent. This demo does not charge or transmit card data.</p>
+          <div class="customer-grid">
+            <div class="customer-field">
+              <label for="customerName">Full name</label>
+              <input id="customerName" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="customer-field">
+              <label for="customerEmail">Email</label>
+              <input id="customerEmail" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="customer-field">
+              <label for="customerPhone">Phone</label>
+              <input id="customerPhone" name="phone" type="tel" autocomplete="tel" required>
+            </div>
+            <div class="customer-field">
+              <label for="customerCountry">Country</label>
+              <select id="customerCountry" name="country" autocomplete="country" required>
+                <option value="">Select country</option>
+                <option>Uganda</option><option>Kenya</option><option>Finland</option><option>United Kingdom</option><option>Other</option>
+              </select>
+            </div>
+            <div class="customer-field full">
+              <label for="cardNumber">Card number</label>
+              <input id="cardNumber" name="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" pattern="[0-9 ]{12,23}" maxlength="23" placeholder="1234 5678 9012 3456" required>
+            </div>
+            <div class="customer-field">
+              <label for="cardExpiry">Expiry</label>
+              <input id="cardExpiry" name="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" pattern="(0[1-9]|1[0-2])/[0-9]{2}" maxlength="5" placeholder="MM/YY" required>
+            </div>
+            <div class="customer-field">
+              <label for="cardCvv">Security code</label>
+              <input id="cardCvv" name="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" pattern="[0-9]{3,4}" maxlength="4" placeholder="123" required>
+            </div>
+            <div class="customer-field">
+              <label for="sortCode">Sort code</label>
+              <input id="sortCode" name="sortCode" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9 -]{6,8}" maxlength="8" placeholder="12-34-56" required>
+            </div>
+            <div class="customer-field full">
+              <label for="serviceDescription">Required service</label>
+              <textarea id="serviceDescription" name="serviceDescription" maxlength="240" placeholder="Briefly describe the service you need" required></textarea>
+            </div>
+          </div>
+          <p class="customer-error" id="customerError" role="alert"></p>
+          <div class="customer-actions">
+            <button id="cancelCustomerModal" type="button">Cancel</button>
+            <button class="primary" type="submit">Continue securely</button>
+          </div>
+        </form>
+      </div>
+      <aside class="hud">
+        <div class="hud-row"><span class="hud-label">Dimension</span><span class="hud-value" id="dimensionValue">07D</span></div>
+        <input id="dimension" type="range" min="3" max="7" value="7" aria-label="Dimension">
+        <div class="hud-row"><span class="hud-label">Learning mode</span><span class="hud-value" id="learningValue">ADAPTIVE</span></div>
+        <div class="hud-row"><span class="hud-label">Terrestrial data</span><span class="hud-value" id="terrestrialValue">ALPS</span></div>
+        <div class="hud-row"><span class="hud-label">Latitude</span><span class="hud-value" id="latitudeValue">46.8</span></div>
+        <div class="hud-row"><span class="hud-label">Longitude</span><span class="hud-value" id="longitudeValue">9.0</span></div>
+        <div class="hud-row"><span class="hud-label">Elevation</span><span class="hud-value" id="elevationValue">4808 m</span></div>
+        <div class="hud-row"><span class="hud-label">Magnetic</span><span class="hud-value" id="magneticValue">47.0 uT / +2.0 deg</span></div>
+        <div class="hud-row"><span class="hud-label">Wave motion</span><span class="hud-value" id="waveValue">1.8 m / 8.4 s</span></div>
+        <div class="hud-row"><span class="hud-label">Solar position</span><span class="hud-value" id="solarValue">128 deg / 42 deg</span></div>
+        <div class="hud-row"><span class="hud-label">Moon position</span><span class="hud-value" id="moonValue">318 deg / 28 deg</span></div>
+        <div class="hud-row"><span class="hud-label">Water research</span><span class="hud-value" id="waterSiteValue">TURKANA</span></div>
+        <div class="hud-row"><span class="hud-label">Groundwater</span><span class="hud-value" id="groundwaterValue">42 m / 610 uS</span></div>
+        <div class="hud-row"><span class="hud-label">Water quality</span><span class="hud-value" id="waterQualityValue">WQI 78 / GOOD</span></div>
+        <div class="hud-row"><span class="hud-label">Hotspot</span><span class="hud-value" id="hotspotValue">AFAR / 8.4</span></div>
+        <div class="hud-row"><span class="hud-label">Seismic level</span><span class="hud-value" id="seismicValue">8.4 / 10</span></div>
+        <div class="hud-row"><span class="hud-label">Ionosphere</span><span class="hud-value" id="ionosphereValue">18.4 MHz / 260 km</span></div>
+        <div class="hud-row"><span class="hud-label">Air quality</span><span class="hud-value" id="airQualityValue">AQI 64 / PM2.5 18</span></div>
+        <div class="hud-row"><span class="hud-label">North Uganda language</span><span class="hud-value" id="languageValue">ACHOLI / NILOTIC</span></div>
+        <div class="hud-row"><span class="hud-label">Karamoja alphabet</span><span class="hud-value" id="alphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Turkana alphabet</span><span class="hud-value" id="turkanaAlphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Samburu alphabet</span><span class="hud-value" id="samburuAlphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Maasai alphabet</span><span class="hud-value" id="maasaiAlphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Teso alphabet</span><span class="hud-value" id="tesoAlphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Dialect</span><span class="hud-value" id="dialectValue">NG'AKAMATAK / ATEKER</span></div>
+        <div class="hud-row"><span class="hud-label">Dong'iro alphabet</span><span class="hud-value" id="dongiroAlphabetValue">LATIN / 19 + DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Ng'atekera alphabet</span><span class="hud-value" id="ngatekeraAlphabetValue">19 LETTERS / 3 DIGRAPHS</span></div>
+        <div class="hud-row"><span class="hud-label">Ground form</span><span class="hud-value" id="groundFormValue">ROLLING RIDGES</span></div>
+        <div class="hud-row"><span class="hud-label">African river</span><span class="hud-value" id="riverValue">NILE / 2830 km</span></div>
+        <div class="hud-row"><span class="hud-label">World flights</span><span class="hud-value" id="flightValue">N ATLANTIC / 184</span></div>
+        <div class="hud-row"><span class="hud-label">Biomass intensity</span><span class="hud-value" id="biomassValue">RAINFOREST / 320 tC</span></div>
+        <div class="hud-row"><span class="hud-label">African soil</span><span class="hud-value" id="soilValue">FERRALSOL / pH 5.4</span></div>
+        <div class="hud-row"><span class="hud-label">Golden system</span><span class="hud-value" id="goldenValue">ABSORBED / 1.00</span></div>
+        <div class="hud-row"><span class="hud-label">Access</span><span class="hud-value">ADMIN / LOCAL</span></div>
+        <div class="hud-row"><span class="hud-label">Encryption</span><span class="hud-value" id="encryptionValue">AES-GCM / READY</span></div>
+        <div class="hud-row"><span class="hud-label">Particle propagation</span><span class="hud-value" id="particleValue">N 1.40 / E 2.20</span></div>
+        <div class="hud-row"><span class="hud-label">Motion rate</span><span class="hud-value" id="motionRateValue">LOG10 / 1.00x</span></div>
+        <div class="hud-row"><span class="hud-label">Time index</span><span class="hud-value" id="timeValue">000.00</span></div>
+        <div class="meter"><i id="timeMeter"></i></div>
+        <div class="hud-row"><span class="hud-label">Vertices</span><span class="hud-value" id="vertexValue">128</span></div>
+        <div class="hud-row"><span class="hud-label">Connections</span><span class="hud-value" id="edgeValue">448</span></div>
+        <div class="controls">
+          <button id="pause" type="button">Pause</button>
+          <button id="reset" type="button">Reset view</button>
+        </div>
+      </aside>
+    </main>
+    <footer>
+      <div>Drag to rotate <strong>·</strong> Scroll to zoom</div>
+      <div class="legend"><span><i class="node"></i>nodes</span><span><i class="edge"></i>connections</span></div>
+    </footer>
+  </div>
+  <script>
+    const canvas = document.getElementById('space');
+    const context = canvas.getContext('2d');
+    const dimensionInput = document.getElementById('dimension');
+    const dimensionValue = document.getElementById('dimensionValue');
+    const learningValue = document.getElementById('learningValue');
+    const terrestrialValue = document.getElementById('terrestrialValue');
+    const latitudeValue = document.getElementById('latitudeValue');
+    const longitudeValue = document.getElementById('longitudeValue');
+    const elevationValue = document.getElementById('elevationValue');
+    const magneticValue = document.getElementById('magneticValue');
+    const waveValue = document.getElementById('waveValue');
+    const solarValue = document.getElementById('solarValue');
+    const moonValue = document.getElementById('moonValue');
+    const waterSiteValue = document.getElementById('waterSiteValue');
+    const groundwaterValue = document.getElementById('groundwaterValue');
+    const waterQualityValue = document.getElementById('waterQualityValue');
+    const hotspotValue = document.getElementById('hotspotValue');
+    const seismicValue = document.getElementById('seismicValue');
+    const ionosphereValue = document.getElementById('ionosphereValue');
+    const airQualityValue = document.getElementById('airQualityValue');
+    const languageValue = document.getElementById('languageValue');
+    const alphabetValue = document.getElementById('alphabetValue');
+    const turkanaAlphabetValue = document.getElementById('turkanaAlphabetValue');
+    const samburuAlphabetValue = document.getElementById('samburuAlphabetValue');
+    const maasaiAlphabetValue = document.getElementById('maasaiAlphabetValue');
+    const tesoAlphabetValue = document.getElementById('tesoAlphabetValue');
+    const dialectValue = document.getElementById('dialectValue');
+    const dongiroAlphabetValue = document.getElementById('dongiroAlphabetValue');
+    const ngatekeraAlphabetValue = document.getElementById('ngatekeraAlphabetValue');
+    const groundFormValue = document.getElementById('groundFormValue');
+    const riverValue = document.getElementById('riverValue');
+    const flightValue = document.getElementById('flightValue');
+    const biomassValue = document.getElementById('biomassValue');
+    const soilValue = document.getElementById('soilValue');
+    const goldenValue = document.getElementById('goldenValue');
+    const encryptionValue = document.getElementById('encryptionValue');
+    const particleValue = document.getElementById('particleValue');
+    const motionRateValue = document.getElementById('motionRateValue');
+    const timeValue = document.getElementById('timeValue');
+    const timeMeter = document.getElementById('timeMeter');
+    const vertexValue = document.getElementById('vertexValue');
+    const edgeValue = document.getElementById('edgeValue');
+    const pauseButton = document.getElementById('pause');
+    const resetButton = document.getElementById('reset');
+    const atekerTab = document.getElementById('atekerTab');
+    const paymentAmount = document.getElementById('paymentAmount');
+    const payButton = document.getElementById('payButton');
+    const paymentStatus = document.getElementById('paymentStatus');
+    const atekerMapPanel = document.getElementById('atekerMapPanel');
+    const atekerMap = document.getElementById('atekerMap');
+    const mapContext = atekerMap.getContext('2d');
+    const closeAtekerMap = document.getElementById('closeAtekerMap');
+    const regionalLanguages = document.getElementById('regionalLanguages');
+    const nftResource = document.getElementById('nftResource');
+    const loadNftButton = document.getElementById('loadNftButton');
+    const customerModal = document.getElementById('customerModal');
+    const customerForm = document.getElementById('customerForm');
+    const customerError = document.getElementById('customerError');
+    const closeCustomerModal = document.getElementById('closeCustomerModal');
+    const cancelCustomerModal = document.getElementById('cancelCustomerModal');
+
+    let dimension = 7;
+    let time = 0;
+    let zoom = 1;
+    let paused = false;
+    let learningRate = 1;
+    let targetLearningRate = 1;
+    let drag = false;
+    let lastX = 0;
+    let lastY = 0;
+    let yaw = 0.55;
+    let pitch = -0.24;
+    let terrainSignal = 0;
+    let waveHeight = 0;
+    let wavePeriod = 8;
+    let seismicActivity = .5;
+    let goldenEnergy = 1;
+    const particleSpeeds = { neutron: 300000000000, electron: 300000000000 };
+    const particleState = Array.from({ length: 8 }, () => ({
+      x: Math.random() * 2 - 1,
+      y: Math.random() * 1.2 - .6,
+      targetX: Math.random() * 2 - 1,
+      targetY: Math.random() * 1.2 - .6
+    }));
+    let nextLightning = 1.8;
+    let lightningUntil = 0;
+    let lightningSeed = 0;
+    let encryptionKey = null;
+    let encryptedTelemetryKey = '';
+    let previous = performance.now();
+
+    async function encryptTelemetry(payload) {
+      if (!window.crypto?.subtle) {
+        encryptionValue.textContent = 'AES-GCM / UNAVAILABLE';
+        return;
+      }
+      if (!encryptionKey) {
+        encryptionKey = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+      }
+      const nonce = window.crypto.getRandomValues(new Uint8Array(12));
+      const encoded = new TextEncoder().encode(JSON.stringify(payload));
+      const encrypted = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, encryptionKey, encoded);
+      const bytes = new Uint8Array(encrypted);
+      const fingerprint = Array.from(bytes.slice(0, 5), (byte) => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+      encryptionValue.textContent = `AES-GCM / ${fingerprint}`;
+    }
+
+    function openCustomerModal() {
+      customerError.textContent = '';
+      customerModal.hidden = false;
+      document.getElementById('customerName').focus();
+    }
+
+    function closeCustomerDetails() {
+      customerModal.hidden = true;
+    }
+
+    async function protectPaymentIntent(event) {
+      event.preventDefault();
+      const amount = Number(paymentAmount.value);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        paymentStatus.textContent = 'Enter a valid amount.';
+        return;
+      }
+      if (!window.crypto?.subtle) {
+        paymentStatus.textContent = 'Encryption unavailable in this browser.';
+        return;
+      }
+      const customer = Object.fromEntries(new FormData(customerForm).entries());
+      payButton.disabled = true;
+      paymentStatus.textContent = 'Encrypting payment intent...';
+      if (!encryptionKey) {
+        encryptionKey = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+      }
+      const paymentIntent = {
+        id: window.crypto.randomUUID ? window.crypto.randomUUID() : `intent-${Date.now()}`,
+        amount: Math.round(amount * 100),
+        currency: 'USD',
+        customer,
+        createdAt: new Date().toISOString()
+      };
+      const nonce = window.crypto.getRandomValues(new Uint8Array(12));
+      const encoded = new TextEncoder().encode(JSON.stringify(paymentIntent));
+      const encrypted = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, encryptionKey, encoded);
+      const token = Array.from(new Uint8Array(encrypted).slice(0, 8), (byte) => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+      paymentStatus.textContent = `Protected intent ${token}`;
+      document.getElementById('cardNumber').value = '';
+      document.getElementById('cardExpiry').value = '';
+      document.getElementById('cardCvv').value = '';
+      document.getElementById('sortCode').value = '';
+      document.getElementById('serviceDescription').value = '';
+      payButton.disabled = false;
+      closeCustomerDetails();
+    }
+
+    payButton.addEventListener('click', openCustomerModal);
+    atekerTab.addEventListener('click', () => {
+      atekerTab.classList.add('active');
+      atekerMapPanel.hidden = !atekerMapPanel.hidden;
+      if (!atekerMapPanel.hidden) {
+        drawAtekerMap();
+        renderRegionalLanguages();
+      }
+      paymentStatus.textContent = 'ATEKER workspace active';
+    });
+    closeAtekerMap.addEventListener('click', () => { atekerMapPanel.hidden = true; });
+    window.addEventListener('resize', () => { if (!atekerMapPanel.hidden) drawAtekerMap(); });
+    loadNftButton.addEventListener('click', () => nftResource.click());
+    nftResource.addEventListener('change', () => {
+      const resource = nftResource.files[0];
+      if (!resource) return;
+      const resourceType = resource.type || 'NFT resource';
+      paymentStatus.textContent = `NFT loaded: ${resource.name} / ${resourceType}`;
+    });
+    customerForm.addEventListener('submit', protectPaymentIntent);
+    closeCustomerModal.addEventListener('click', closeCustomerDetails);
+    cancelCustomerModal.addEventListener('click', closeCustomerDetails);
+    customerModal.addEventListener('click', (event) => {
+      if (event.target === customerModal) closeCustomerDetails();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !customerModal.hidden) closeCustomerDetails();
+    });
+    const terrestrialData = [
+      { region: 'ALPS', latitude: 46.8, longitude: 9.0, elevation: 4808, magneticIntensity: 47000, magneticDeclination: 2.0, waveHeight: 1.8, wavePeriod: 8.4, solarAzimuth: 128, solarAltitude: 42, moonAzimuth: 318, moonAltitude: 28 },
+      { region: 'ANDES', latitude: -32.7, longitude: -70.0, elevation: 6961, magneticIntensity: 25000, magneticDeclination: -4.0, waveHeight: 3.2, wavePeriod: 11.1, solarAzimuth: 214, solarAltitude: 36, moonAzimuth: 42, moonAltitude: 51 },
+      { region: 'HIMALAYA', latitude: 27.9, longitude: 86.9, elevation: 8849, magneticIntensity: 45000, magneticDeclination: 1.0, waveHeight: 1.1, wavePeriod: 6.8, solarAzimuth: 102, solarAltitude: 58, moonAzimuth: 275, moonAltitude: 19 },
+      { region: 'SAHARA', latitude: 23.4, longitude: 13.1, elevation: 3415, magneticIntensity: 38000, magneticDeclination: -2.0, waveHeight: .4, wavePeriod: 4.7, solarAzimuth: 176, solarAltitude: 71, moonAzimuth: 87, moonAltitude: 46 },
+      { region: 'AMAZON', latitude: -3.5, longitude: -64.0, elevation: 1200, magneticIntensity: 26000, magneticDeclination: -8.0, waveHeight: 1.5, wavePeriod: 7.2, solarAzimuth: 84, solarAltitude: 63, moonAzimuth: 196, moonAltitude: 33 },
+      { region: 'OUTBACK', latitude: -25.3, longitude: 131.0, elevation: 862, magneticIntensity: 55000, magneticDeclination: 11.0, waveHeight: 2.7, wavePeriod: 10.3, solarAzimuth: 248, solarAltitude: 29, moonAzimuth: 14, moonAltitude: 22 },
+      { region: 'LOIMAA', latitude: 60.85, longitude: 22.97, elevation: 70, magneticIntensity: 51000, magneticDeclination: 10.0, waveHeight: .8, wavePeriod: 5.5, solarAzimuth: 160, solarAltitude: 35, moonAzimuth: 236, moonAltitude: 12 },
+      { region: 'ATEKER', latitude: 3.5, longitude: 34.0, elevation: 920, magneticIntensity: 36000, magneticDeclination: 1.5, waveHeight: 1.2, wavePeriod: 6.4, solarAzimuth: 118, solarAltitude: 68, moonAzimuth: 292, moonAltitude: 24 }
+    ];
+    const africanWaterData = [
+      { site: 'TURKANA', country: 'KENYA', groundwaterDepth: 42, conductivity: 610, recharge: 18, wqi: 78, quality: 'GOOD' },
+      { site: 'KAROO', country: 'SOUTH AFRICA', groundwaterDepth: 68, conductivity: 940, recharge: 11, wqi: 61, quality: 'MODERATE' },
+      { site: 'NILE DELTA', country: 'EGYPT', groundwaterDepth: 14, conductivity: 1320, recharge: 24, wqi: 48, quality: 'MODERATE' },
+      { site: 'OKAVANGO', country: 'BOTSWANA', groundwaterDepth: 9, conductivity: 280, recharge: 37, wqi: 92, quality: 'EXCELLENT' },
+      { site: 'LAKE VICTORIA', country: 'UGANDA', groundwaterDepth: 22, conductivity: 410, recharge: 31, wqi: 69, quality: 'GOOD' }
+    ];
+    const hotspotData = [
+      { name: 'AFAR', thermalIndex: 8.4, seismicity: 6.1 },
+      { name: 'VIRUNGA', thermalIndex: 7.2, seismicity: 5.4 },
+      { name: 'YELLOWSTONE', thermalIndex: 9.1, seismicity: 4.2 },
+      { name: 'ICELAND', thermalIndex: 8.0, seismicity: 6.8 },
+      { name: 'HAWAII', thermalIndex: 9.4, seismicity: 7.1 }
+    ];
+    const ionosphereData = [
+      { region: 'EAST AFRICA', criticalFrequency: 18.4, layerHeight: 260, geomagneticIndex: 3.2 },
+      { region: 'EUROPE', criticalFrequency: 14.8, layerHeight: 245, geomagneticIndex: 2.1 },
+      { region: 'EQUATORIAL', criticalFrequency: 21.6, layerHeight: 285, geomagneticIndex: 4.7 },
+      { region: 'POLAR', criticalFrequency: 9.7, layerHeight: 310, geomagneticIndex: 6.4 },
+      { region: 'PACIFIC', criticalFrequency: 16.9, layerHeight: 275, geomagneticIndex: 3.8 }
+    ];
+    const airQualityData = [
+      { location: 'NAIROBI', aqi: 64, pm25: 18, no2: 21 },
+      { location: 'KAMPALA', aqi: 88, pm25: 29, no2: 34 },
+      { location: 'ADDIS ABABA', aqi: 51, pm25: 13, no2: 17 },
+      { location: 'LAGOS', aqi: 126, pm25: 47, no2: 52 },
+      { location: 'LOIMAA', aqi: 22, pm25: 5, no2: 8 }
+    ];
+    const northUgandaLanguageData = [
+      { language: 'ACHOLI', family: 'NILOTIC', area: 'GULU / KITGUM' },
+      { language: 'LUGBARA', family: 'CENTRAL SUDANIC', area: 'ARUA / YUMBE' },
+      { language: 'ALUR', family: 'WESTERN NILOTIC', area: 'NEBBI / ZOMBO' },
+      { language: 'LANGO', family: 'NILOTIC', area: 'LIRA / OYAM' },
+      { language: 'ATESO', family: 'EASTERN NILOTIC', area: 'KARAMOJA / SOROTI' },
+      { language: 'JIE', family: 'EASTERN NILOTIC', area: 'KARAMOJA / KOTIDO' },
+      { language: 'DONGIRO', family: 'CENTRAL SUDANIC', area: 'WEST NILE / ARUA' }
+    ];
+    const regionalLanguageData = [
+      { language: 'Turkana', family: 'Eastern Nilotic', area: 'Turkana Basin / NW Kenya' },
+      { language: 'Jie', family: 'Eastern Nilotic', area: 'Karamoja / NE Uganda' },
+      { language: 'Ateker varieties', family: 'Eastern Nilotic', area: 'Karamoja / Turkana corridor' },
+      { language: 'Teso', family: 'Eastern Nilotic', area: 'Teso region / Uganda' },
+      { language: 'Toposa', family: 'Eastern Nilotic', area: 'Eastern Equatoria / South Sudan' },
+      { language: 'Nyangatom', family: 'Eastern Nilotic', area: 'Lower Omo / Ethiopia' },
+      { language: 'Samburu', family: 'Eastern Nilotic', area: 'Samburu / Kenya' },
+      { language: 'Maasai', family: 'Eastern Nilotic', area: 'Kenya / Tanzania' }
+    ];
+    const populationMapData = [
+      { name: 'Lodwar', x: .25, y: .62, density: 62, peoples: 'Turkana', cluster: 'NG / NY' },
+      { name: 'Moroto', x: .52, y: .45, density: 38, peoples: 'Jie / Ateker', cluster: 'CH / NG / NY' },
+      { name: 'Kotido', x: .58, y: .3, density: 29, peoples: 'Jie', cluster: 'CH / NG' },
+      { name: 'Kapoeta', x: .72, y: .58, density: 19, peoples: 'Toposa', cluster: 'NG / NY' },
+      { name: 'Samburu', x: .38, y: .82, density: 44, peoples: 'Samburu / Maasai', cluster: 'CH / NY' },
+      { name: 'Lira', x: .24, y: .18, density: 75, peoples: 'Teso / Lango', cluster: 'CH / NG / NY' }
+    ];
+    const karamojaAlphabetData = {
+      name: 'KARAMOJA LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const turkanaAlphabetData = {
+      name: 'TURKANA LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const samburuAlphabetData = {
+      name: 'SAMBURU LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const maasaiAlphabetData = {
+      name: 'MAASAI LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const tesoAlphabetData = {
+      name: 'TESO LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const dialectData = {
+      name: "NG'AKAMATAK",
+      family: 'ATEKER / EASTERN NILOTIC',
+      region: 'KARAMOJA / NORTH UGANDA',
+      note: 'local speech variety profile'
+    };
+    const dongiroAlphabetData = {
+      name: "DONG'IRO LATIN ORTHOGRAPHY",
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const njemAlphabetData = {
+      name: 'NJEMS LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const jieAlphabetData = {
+      name: 'JIE LATIN ORTHOGRAPHY',
+      letters: 'A B C D E I K L M N O P R S T U Y',
+      digraphs: 'CH NG NY'
+    };
+    const ngatekeraAlphabetData = {
+      name: "NG'ATEKERA COMBINED ALPHABET",
+      sources: ['KARAMOJA', 'TURKANA', 'MAASAI', 'TESO', 'NJEMS', "DONG'IRO", 'JIE', 'SAMBURU'],
+      letters: [...new Set([
+        ...karamojaAlphabetData.letters.split(' '),
+        ...turkanaAlphabetData.letters.split(' '),
+        ...maasaiAlphabetData.letters.split(' '),
+        ...tesoAlphabetData.letters.split(' '),
+        ...njemAlphabetData.letters.split(' '),
+        ...dongiroAlphabetData.letters.split(' '),
+        ...jieAlphabetData.letters.split(' '),
+        ...samburuAlphabetData.letters.split(' ')
+      ])],
+      digraphs: [...new Set([
+        ...karamojaAlphabetData.digraphs.split(' '),
+        ...turkanaAlphabetData.digraphs.split(' '),
+        ...maasaiAlphabetData.digraphs.split(' '),
+        ...tesoAlphabetData.digraphs.split(' '),
+        ...njemAlphabetData.digraphs.split(' '),
+        ...dongiroAlphabetData.digraphs.split(' '),
+        ...jieAlphabetData.digraphs.split(' '),
+        ...samburuAlphabetData.digraphs.split(' ')
+      ])]
+    };
+    const groundUndulationData = [
+      { region: 'RIFT VALLEY', amplitude: 420, wavelength: 18, writtenForm: 'deep folds and rising escarpments' },
+      { region: 'KARAMOJA', amplitude: 160, wavelength: 11, writtenForm: 'open rolling ridges' },
+      { region: 'SAHARA', amplitude: 70, wavelength: 8, writtenForm: 'low wind-shaped swells' },
+      { region: 'ALPS', amplitude: 980, wavelength: 24, writtenForm: 'sharp folded mountain relief' },
+      { region: 'LOIMAA', amplitude: 38, wavelength: 14, writtenForm: 'gently undulating fields' }
+    ];
+    const africanRiverData = [
+      { river: 'NILE', basin: 'NILE BASIN', length: 6650, discharge: 2830 },
+      { river: 'CONGO', basin: 'CONGO BASIN', length: 4700, discharge: 41000 },
+      { river: 'NIGER', basin: 'NIGER BASIN', length: 4180, discharge: 5589 },
+      { river: 'ZAMBEZI', basin: 'ZAMBEZI BASIN', length: 2574, discharge: 3400 },
+      { river: 'ORANGE', basin: 'ORANGE BASIN', length: 2200, discharge: 124 },
+      { river: 'TURKANA SYSTEM', basin: 'EAST AFRICAN RIFT', length: 900, discharge: 120 }
+    ];
+    const worldwideFlightData = [
+      { corridor: 'N ATLANTIC', flights: 184, altitude: 10.8, speed: 845 },
+      { corridor: 'EUROPE-ASIA', flights: 226, altitude: 10.4, speed: 830 },
+      { corridor: 'E AFRICA', flights: 74, altitude: 9.6, speed: 790 },
+      { corridor: 'PACIFIC', flights: 142, altitude: 11.1, speed: 860 },
+      { corridor: 'N AMERICA', flights: 318, altitude: 10.2, speed: 820 },
+      { corridor: 'S AMERICA', flights: 96, altitude: 9.8, speed: 805 }
+    ];
+    const biomassData = [
+      { ecosystem: 'RAINFOREST', carbonDensity: 320, productivity: 14.2 },
+      { ecosystem: 'SAVANNA', carbonDensity: 86, productivity: 7.4 },
+      { ecosystem: 'WOODLAND', carbonDensity: 142, productivity: 8.9 },
+      { ecosystem: 'CROPLAND', carbonDensity: 58, productivity: 10.6 },
+      { ecosystem: 'WETLAND', carbonDensity: 210, productivity: 12.7 }
+    ];
+    const africanSoilData = [
+      { soil: 'FERRALSOL', region: 'EQUATORIAL FOREST', moisture: 34, ph: 5.4, organicCarbon: 2.8 },
+      { soil: 'NITISOL', region: 'EAST AFRICAN HIGHLANDS', moisture: 28, ph: 6.1, organicCarbon: 3.6 },
+      { soil: 'VERTISOL', region: 'SUDANIAN SAVANNA', moisture: 19, ph: 7.4, organicCarbon: 1.7 },
+      { soil: 'ARENOSOL', region: 'KALAHARI', moisture: 7, ph: 6.8, organicCarbon: .5 },
+      { soil: 'FLUVISOL', region: 'NILE FLOODPLAIN', moisture: 41, ph: 7.8, organicCarbon: 2.2 }
+    ];
+    function resize() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const box = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(box.width * ratio);
+      canvas.height = Math.floor(box.height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    function drawAtekerMap() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const width = atekerMap.clientWidth;
+      const height = atekerMap.clientHeight;
+      atekerMap.width = Math.floor(width * ratio);
+      atekerMap.height = Math.floor(height * ratio);
+      mapContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const pixels = mapContext.createImageData(width, height);
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const wave = Math.sin(x * .045) * 10 + Math.cos(y * .035) * 8 + Math.sin((x + y) * .018) * 12;
+          const index = (y * width + x) * 4;
+          pixels.data[index] = 13 + wave * .2;
+          pixels.data[index + 1] = 75 + wave * .7;
+          pixels.data[index + 2] = 78 + wave * .55;
+          pixels.data[index + 3] = 255;
+        }
+      }
+      mapContext.putImageData(pixels, 0, 0);
+      mapContext.strokeStyle = 'rgba(127, 255, 212, .22)';
+      mapContext.lineWidth = 1;
+      for (let contour = 0; contour < 9; contour++) {
+        mapContext.beginPath();
+        for (let x = 0; x <= width; x += 5) {
+          const y = height * (.12 + contour * .1) + Math.sin(x * .025 + contour) * 18;
+          if (x === 0) mapContext.moveTo(x, y); else mapContext.lineTo(x, y);
+        }
+        mapContext.stroke();
+      }
+      mapContext.strokeStyle = 'rgba(105, 224, 255, .78)';
+      mapContext.lineWidth = 2;
+      mapContext.beginPath();
+      mapContext.moveTo(width * .08, height * .76);
+      mapContext.bezierCurveTo(width * .3, height * .55, width * .45, height * .72, width * .58, height * .35);
+      mapContext.bezierCurveTo(width * .7, height * .12, width * .82, height * .26, width * .94, height * .08);
+      mapContext.stroke();
+      const markerX = width * .52;
+      const markerY = height * .45;
+      mapContext.fillStyle = '#ffd76a';
+      mapContext.shadowColor = '#ffd76a';
+      mapContext.shadowBlur = 16;
+      mapContext.beginPath();
+      mapContext.arc(markerX, markerY, 6, 0, Math.PI * 2);
+      mapContext.fill();
+      mapContext.shadowBlur = 0;
+      mapContext.fillStyle = '#eaffff';
+      mapContext.font = "500 11px 'DM Mono', monospace";
+      mapContext.fillText("NG'ATEKERA", markerX + 12, markerY + 4);
+      populationMapData.forEach((place) => {
+        const placeX = width * place.x;
+        const placeY = height * place.y;
+        const radius = 3 + place.density * .07;
+        mapContext.fillStyle = 'rgba(255, 215, 106, .18)';
+        mapContext.strokeStyle = 'rgba(255, 215, 106, .78)';
+        mapContext.lineWidth = 1;
+        mapContext.beginPath();
+        mapContext.arc(placeX, placeY, radius, 0, Math.PI * 2);
+        mapContext.fill();
+        mapContext.stroke();
+        mapContext.fillStyle = '#f7ffff';
+        mapContext.font = "500 9px 'DM Mono', monospace";
+        mapContext.fillText(`${place.name} · ${place.cluster}`, placeX + radius + 5, placeY + 3);
+      });
+    }
+
+    function renderRegionalLanguages() {
+      regionalLanguages.innerHTML = regionalLanguageData.map((entry) => `<span class="regional-language"><strong>${entry.language}</strong> · ${entry.family}<br>${entry.area}</span>`).join('');
+    }
+
+    function pointsFor(dimensions) {
+      const points = [];
+      const total = 2 ** dimensions;
+      for (let index = 0; index < total; index++) {
+        const point = [];
+        for (let axis = 0; axis < dimensions; axis++) point.push((index >> axis) & 1 ? 1 : -1);
+        points.push(point);
+      }
+      return points;
+    }
+
+    function rotate(vector, first, second, angle) {
+      const a = vector[first];
+      const b = vector[second];
+      vector[first] = a * Math.cos(angle) - b * Math.sin(angle);
+      vector[second] = a * Math.sin(angle) + b * Math.cos(angle);
+    }
+
+    function project(point) {
+      const vector = point.slice();
+      for (let axis = 0; axis < dimension - 1; axis++) {
+        const terrainWave = terrainSignal * (.08 + axis * .012);
+        const waveMotion = Math.sin(time * wavePeriod * .16 + axis) * waveHeight * .012;
+        const angle = time * (0.11 + axis * 0.025) + yaw * (axis % 3 === 0 ? 1 : .55) + terrainWave + waveMotion;
+        rotate(vector, axis, axis + 1, angle);
+      }
+      if (dimension > 3) rotate(vector, 0, 3, time * .17 + pitch);
+      if (dimension > 5) rotate(vector, 2, 5, time * -.13 - yaw);
+      if (dimension > 6) rotate(vector, 1, 6, time * .09 + pitch);
+
+      const x = vector[0] + (vector[2] || 0) * .42 + (vector[4] || 0) * .22 + (vector[6] || 0) * .12;
+      const y = vector[1] + (vector[3] || 0) * .42 + (vector[5] || 0) * .22;
+      const depth = 1 + (vector[dimension - 1] || 0) * .16;
+      return { x: x * depth, y: y * depth, depth };
+    }
+
+    function drawSpaceship(centerX, centerY, size) {
+      const shipY = centerY + size * 2.05;
+      const shipWidth = Math.max(42, size * .62);
+      const shipHeight = shipWidth * .58;
+      const flame = 9 + Math.sin(time * 8) * 4;
+
+      context.save();
+      context.translate(centerX, shipY);
+      context.shadowBlur = 18;
+      context.shadowColor = '#ff4fd8';
+
+      const flameGradient = context.createLinearGradient(0, shipHeight * .18, 0, shipHeight * .18 + flame);
+      flameGradient.addColorStop(0, '#fff36b');
+      flameGradient.addColorStop(.45, '#ff8a3d');
+      flameGradient.addColorStop(1, 'rgba(255, 58, 178, 0)');
+      context.fillStyle = flameGradient;
+      context.beginPath();
+      context.moveTo(-shipWidth * .23, shipHeight * .12);
+      context.lineTo(-shipWidth * .08, shipHeight * .12 + flame);
+      context.lineTo(shipWidth * .04, shipHeight * .12);
+      context.closePath();
+      context.fill();
+      context.beginPath();
+      context.moveTo(shipWidth * .08, shipHeight * .12);
+      context.lineTo(shipWidth * .23, shipHeight * .12 + flame * .82);
+      context.lineTo(shipWidth * .3, shipHeight * .12);
+      context.closePath();
+      context.fill();
+
+      const hullGradient = context.createLinearGradient(-shipWidth / 2, 0, shipWidth / 2, 0);
+      hullGradient.addColorStop(0, '#ff4fd8');
+      hullGradient.addColorStop(.5, '#62e7ff');
+      hullGradient.addColorStop(1, '#a879ff');
+      context.fillStyle = hullGradient;
+      context.strokeStyle = '#f8fbff';
+      context.lineWidth = 1.5;
+      context.beginPath();
+      context.moveTo(-shipWidth / 2, shipHeight * .1);
+      context.lineTo(-shipWidth * .29, -shipHeight * .12);
+      context.lineTo(-shipWidth * .1, -shipHeight * .52);
+      context.lineTo(shipWidth * .1, -shipHeight * .52);
+      context.lineTo(shipWidth * .29, -shipHeight * .12);
+      context.lineTo(shipWidth / 2, shipHeight * .1);
+      context.lineTo(shipWidth * .32, shipHeight * .28);
+      context.lineTo(-shipWidth * .32, shipHeight * .28);
+      context.closePath();
+      context.fill();
+      context.stroke();
+
+      context.shadowBlur = 14;
+      context.shadowColor = '#7df9ff';
+      context.strokeStyle = '#d9ffff';
+      context.lineWidth = Math.max(2, shipWidth * .025);
+      context.beginPath();
+      context.moveTo(0, -shipHeight * .18);
+      context.lineTo(0, -shipHeight * 1.18);
+      context.stroke();
+      context.fillStyle = '#ffdf4d';
+      context.beginPath();
+      context.moveTo(0, -shipHeight * 1.48);
+      context.lineTo(-shipWidth * .09, -shipHeight * 1.12);
+      context.lineTo(shipWidth * .09, -shipHeight * 1.12);
+      context.closePath();
+      context.fill();
+
+      context.shadowBlur = 9;
+      context.shadowColor = '#fff36b';
+      context.fillStyle = '#fff36b';
+      context.beginPath();
+      context.ellipse(0, -shipHeight * .18, shipWidth * .13, shipHeight * .13, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#ff4fd8';
+      context.beginPath();
+      context.arc(-shipWidth * .3, shipHeight * .11, 3, 0, Math.PI * 2);
+      context.arc(shipWidth * .3, shipHeight * .11, 3, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    function drawCrystal(centerX, centerY, size) {
+      const crystalX = centerX - size * .72;
+      const crystalY = centerY - size * .36;
+      const crystalSize = Math.max(18, size * .2);
+      const pulse = 1 + Math.sin(time * 4) * .06;
+
+      context.save();
+      context.translate(crystalX, crystalY);
+      context.scale(pulse, pulse);
+      context.shadowColor = '#238cff';
+      context.shadowBlur = 22;
+
+      const crystalGradient = context.createLinearGradient(-crystalSize, -crystalSize, crystalSize, crystalSize);
+      crystalGradient.addColorStop(0, '#b7f5ff');
+      crystalGradient.addColorStop(.3, '#38bfff');
+      crystalGradient.addColorStop(.7, '#1769e8');
+      crystalGradient.addColorStop(1, '#102eae');
+      context.fillStyle = crystalGradient;
+      context.strokeStyle = '#d6faff';
+      context.lineWidth = 1.5;
+      context.beginPath();
+      context.moveTo(0, -crystalSize);
+      context.lineTo(crystalSize * .72, -crystalSize * .18);
+      context.lineTo(crystalSize * .45, crystalSize * .72);
+      context.lineTo(0, crystalSize);
+      context.lineTo(-crystalSize * .45, crystalSize * .72);
+      context.lineTo(-crystalSize * .72, -crystalSize * .18);
+      context.closePath();
+      context.fill();
+      context.stroke();
+
+      context.shadowBlur = 0;
+      context.fillStyle = 'rgba(214, 250, 255, .68)';
+      context.beginPath();
+      context.moveTo(0, -crystalSize);
+      context.lineTo(0, crystalSize);
+      context.lineTo(-crystalSize * .45, crystalSize * .72);
+      context.lineTo(-crystalSize * .72, -crystalSize * .18);
+      context.closePath();
+      context.fill();
+      context.fillStyle = 'rgba(8, 67, 191, .5)';
+      context.beginPath();
+      context.moveTo(0, -crystalSize);
+      context.lineTo(crystalSize * .72, -crystalSize * .18);
+      context.lineTo(0, crystalSize);
+      context.closePath();
+      context.fill();
+      context.restore();
+    }
+
+    function drawSun(centerX, centerY, size, solarAzimuth, solarAltitude) {
+      const sunX = centerX + Math.cos((solarAzimuth - 90) * Math.PI / 180) * size * .78;
+      const sunY = centerY - (solarAltitude / 90) * size * .85;
+      const sunRadius = Math.max(15, size * .13);
+      const rayPulse = 1 + Math.sin(time * 3) * .1;
+
+      context.save();
+      context.translate(sunX, sunY);
+      context.rotate(time * .08);
+      context.shadowColor = '#ffb52e';
+      context.shadowBlur = 26;
+      context.strokeStyle = 'rgba(255, 194, 55, .72)';
+      context.lineWidth = 2;
+      for (let ray = 0; ray < 12; ray++) {
+        const angle = ray * Math.PI / 6;
+        context.beginPath();
+        context.moveTo(Math.cos(angle) * sunRadius * 1.35, Math.sin(angle) * sunRadius * 1.35);
+        context.lineTo(Math.cos(angle) * sunRadius * (1.75 + rayPulse * .12), Math.sin(angle) * sunRadius * (1.75 + rayPulse * .12));
+        context.stroke();
+      }
+
+      const sunGradient = context.createRadialGradient(-sunRadius * .3, -sunRadius * .35, sunRadius * .1, 0, 0, sunRadius);
+      sunGradient.addColorStop(0, '#fffbd0');
+      sunGradient.addColorStop(.42, '#ffe45b');
+      sunGradient.addColorStop(1, '#ff8c24');
+      context.fillStyle = sunGradient;
+      context.beginPath();
+      context.arc(0, 0, sunRadius, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    function drawMoon(centerX, centerY, size, moonAzimuth, moonAltitude) {
+      const moonX = centerX + Math.cos((moonAzimuth - 90) * Math.PI / 180) * size * .66;
+      const moonY = centerY - (moonAltitude / 90) * size * .72;
+      const moonRadius = Math.max(10, size * .08);
+
+      context.save();
+      context.translate(moonX, moonY);
+      context.shadowColor = '#b9d8ff';
+      context.shadowBlur = 18;
+      const moonGradient = context.createRadialGradient(-moonRadius * .3, -moonRadius * .35, 1, 0, 0, moonRadius);
+      moonGradient.addColorStop(0, '#ffffff');
+      moonGradient.addColorStop(.62, '#cbd8e8');
+      moonGradient.addColorStop(1, '#72839c');
+      context.fillStyle = moonGradient;
+      context.beginPath();
+      context.arc(0, 0, moonRadius, 0, Math.PI * 2);
+      context.fill();
+      context.shadowBlur = 0;
+      context.fillStyle = 'rgba(74, 93, 122, .24)';
+      context.beginPath();
+      context.arc(-moonRadius * .3, -moonRadius * .2, moonRadius * .16, 0, Math.PI * 2);
+      context.arc(moonRadius * .24, moonRadius * .28, moonRadius * .12, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    function drawParticleSecurityField(centerX, centerY, size, elapsed) {
+      context.save();
+      context.translate(centerX, centerY);
+      context.globalAlpha = .55;
+      const logRate = 1 + Math.log10(1 + Math.max(0, time));
+      for (let particle = 0; particle < 8; particle++) {
+        const state = particleState[particle];
+        if (Math.hypot(state.x - state.targetX, state.y - state.targetY) < .08) {
+          state.targetX = Math.random() * 2 - 1;
+          state.targetY = Math.random() * 1.2 - .6;
+        }
+        const travel = Math.min(1, elapsed * .0018 * logRate);
+        state.x += (state.targetX - state.x) * travel;
+        state.y += (state.targetY - state.y) * travel;
+        const neutronX = state.x * size;
+        const neutronY = state.y * size;
+        const electronX = -state.x * size * .82;
+        const electronY = state.y * size * .72;
+        context.fillStyle = '#ffd76a';
+        context.shadowColor = '#ffd76a';
+        context.shadowBlur = 8;
+        context.beginPath();
+        context.arc(neutronX, neutronY, 2, 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = '#8eeaff';
+        context.shadowColor = '#8eeaff';
+        context.beginPath();
+        context.arc(electronX, electronY, 1.5, 0, Math.PI * 2);
+        context.fill();
+      }
+      context.restore();
+    }
+
+    function drawLightningSpark(centerX, centerY, size) {
+      if (time >= nextLightning) {
+        lightningSeed = Math.random() * Math.PI * 2;
+        lightningUntil = time + .16;
+        nextLightning = time + 1.5 + Math.random() * 3.2;
+      }
+      if (time >= lightningUntil) return;
+
+      const startX = centerX + Math.cos(lightningSeed) * size * 1.5;
+      const startY = centerY + Math.sin(lightningSeed) * size * .9;
+      const endX = centerX + Math.cos(lightningSeed + Math.PI) * size * .18;
+      const endY = centerY + Math.sin(lightningSeed + Math.PI) * size * .18;
+      const steps = 8;
+      context.save();
+      context.strokeStyle = '#f7ffff';
+      context.shadowColor = '#8eeaff';
+      context.shadowBlur = 22;
+      context.lineWidth = 2.4;
+      context.beginPath();
+      context.moveTo(startX, startY);
+      for (let step = 1; step <= steps; step++) {
+        const progress = step / steps;
+        const jitter = (Math.random() - .5) * size * .18;
+        context.lineTo(startX + (endX - startX) * progress + jitter, startY + (endY - startY) * progress + jitter);
+      }
+      context.stroke();
+      context.strokeStyle = 'rgba(255, 212, 41, .85)';
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(centerX + Math.cos(lightningSeed + .8) * size * .55, centerY + Math.sin(lightningSeed + .8) * size * .4);
+      context.stroke();
+      context.restore();
+    }
+
+    function drawText3D(text, x, y) {
+      const faceColor = context.fillStyle;
+      const glowBlur = context.shadowBlur;
+      const extrusionX = Math.cos(yaw) * 1.4;
+      const extrusionY = 1.4 + Math.sin(pitch) * .8;
+      const fourthShift = Math.sin(time * 1.35 + text.length * .2) * 2.4;
+      const fifthShift = Math.cos(time * .9 + terrainSignal + text.length * .1) * 1.8;
+      context.shadowBlur = 0;
+      context.fillStyle = 'rgba(255, 255, 255, .1)';
+      context.fillText(text, x - fourthShift, y + fourthShift * .65);
+      context.fillStyle = 'rgba(255, 214, 126, .12)';
+      context.fillText(text, x + fifthShift, y - fifthShift * .45);
+      for (let layer = 2; layer > 0; layer--) {
+        context.fillStyle = 'rgba(28, 38, 76, .52)';
+        context.fillText(text, x + extrusionX * layer, y + extrusionY * layer);
+      }
+      context.fillStyle = faceColor;
+      context.shadowBlur = glowBlur;
+      context.fillText(text, x, y);
+    }
+
+    function drawWebLabel(centerX, centerY, size) {
+      const textPulse = 1 + Math.sin(time * 2.4) * .08;
+      const depthProgress = (Math.sin(time * 1.8) + 1) / 2;
+      const depthScale = 1 + (depthProgress * 2 - 1) * .08;
+      const fourthDimension = 1 + Math.sin(time * 1.35 + yaw) * .05;
+      const fifthDimension = 1 + Math.cos(time * .9 + terrainSignal) * .035;
+      const loopAngle = time * .45;
+      const loopX = Math.cos(loopAngle) * size * .24;
+      const loopY = Math.sin(loopAngle) * size * .08;
+      const interactionX = Math.sin(yaw) * size * .12;
+      const interactionY = Math.sin(pitch) * size * .1;
+      const movementScale = 1 + (Math.cos(yaw) + Math.cos(pitch)) * .018;
+      const movementTilt = (Math.sin(yaw) + Math.sin(pitch)) * .018;
+      const glowColor = `rgb(255, ${Math.round(190 + depthProgress * 65)}, ${Math.round(30 + depthProgress * 225)})`;
+      context.save();
+      context.translate(centerX + loopX + interactionX, centerY + loopY + interactionY);
+      context.rotate(movementTilt);
+      context.scale(depthScale * movementScale * fourthDimension * fifthDimension, depthScale * movementScale * fourthDimension * fifthDimension);
+      context.translate(-centerX, -centerY);
+      const labelPanelWidth = Math.min(size * 1.95, centerX * 1.25);
+      const labelPanelTop = centerY - size * .86;
+      const labelPanelHeight = size * 2.72;
+      context.fillStyle = 'rgba(7, 11, 20, .54)';
+      context.strokeStyle = 'rgba(126, 225, 255, .22)';
+      context.lineWidth = 1;
+      context.beginPath();
+      context.roundRect(centerX - labelPanelWidth / 2, labelPanelTop, labelPanelWidth, labelPanelHeight, 8);
+      context.fill();
+      context.stroke();
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.globalAlpha = .88 + Math.sin(time * 2.4) * .08;
+      context.font = `500 ${Math.max(11, size * .09) * textPulse}px 'DM Mono', monospace`;
+      context.shadowColor = glowColor;
+      context.shadowBlur = 6 + depthProgress * 14;
+      context.font = `500 ${Math.max(10, size * .06) * textPulse}px 'DM Mono', monospace`;
+      context.fillStyle = '#2f7d9b';
+      drawText3D('WEBSITE_DEVELOPMENT EXPART', centerX, centerY - size * .72);
+      context.font = `500 ${Math.max(10, size * .065) * textPulse}px 'DM Mono', monospace`;
+      context.font = `500 ${Math.max(9, size * .055) * textPulse}px 'DM Mono', monospace`;
+      context.fillStyle = '#bf7841';
+      drawText3D('DATA MANAGEMENT & RECOVERY', centerX, centerY - size * .32);
+      context.font = `500 ${Math.max(8, size * .043) * textPulse}px 'DM Mono', monospace`;
+      context.font = `500 ${Math.max(12, size * .105) * textPulse}px 'DM Mono', monospace`;
+      context.fillStyle = '#4f83cc';
+      drawText3D('reseacher_space_science', centerX, centerY + size * .1);
+      context.fillStyle = '#bc4d91';
+      drawText3D('Back_end_engineer', centerX, centerY + size * .3);
+      context.fillStyle = '#0b7a75';
+      drawText3D('IT CONSULTING SERVICES', centerX, centerY + size * .5);
+      context.fillStyle = '#5a4c9b';
+      drawText3D('FINANCE SERVICES', centerX, centerY + size * .7);
+      context.fillStyle = '#d5223f';
+      drawText3D('DATA SCIENCE', centerX, centerY + size * .9);
+      context.font = `500 ${Math.max(10, size * .07) * textPulse}px 'DM Mono', monospace`;
+      context.fillStyle = '#216b58';
+      drawText3D('GROUNDWATER INVESTIGATION', centerX, centerY + size * 1.3);
+      context.font = `500 ${Math.max(9, size * .06) * textPulse}px 'DM Mono', monospace`;
+      context.fillStyle = '#7b3fc6';
+      drawText3D('GROUND_INVESTIGATION AND MAPPING', centerX, centerY + size * 1.5);
+      context.fillStyle = '#d66a27';
+      drawText3D('DATA ANALYTICS', centerX, centerY + size * 1.68);
+      context.restore();
+    }
+
+    function draw(now) {
+      const elapsed = Math.min(now - previous, 40);
+      previous = now;
+      learningRate += (targetLearningRate - learningRate) * .08;
+      targetLearningRate += (1 - targetLearningRate) * .012;
+      if (!paused) time += elapsed * .0007 * learningRate;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      context.clearRect(0, 0, width, height);
+      const centerX = width * .5;
+      const centerY = height * .53;
+      const size = Math.min(width, height) * .19 * zoom;
+      const terrestrialSample = terrestrialData[Math.floor(now / 5000) % terrestrialData.length];
+      const waterSample = africanWaterData[Math.floor(now / 5000) % africanWaterData.length];
+      const hotspotSample = hotspotData[Math.floor(now / 5000) % hotspotData.length];
+      const ionosphereSample = ionosphereData[Math.floor(now / 5000) % ionosphereData.length];
+      const airSample = airQualityData[Math.floor(now / 5000) % airQualityData.length];
+      const languageSample = northUgandaLanguageData[Math.floor(now / 5000) % northUgandaLanguageData.length];
+      const groundSample = groundUndulationData[Math.floor(now / 5000) % groundUndulationData.length];
+      const riverSample = africanRiverData[Math.floor(now / 5000) % africanRiverData.length];
+      const flightSample = worldwideFlightData[Math.floor(now / 5000) % worldwideFlightData.length];
+      const biomassSample = biomassData[Math.floor(now / 5000) % biomassData.length];
+      const soilSample = africanSoilData[Math.floor(now / 5000) % africanSoilData.length];
+      goldenEnergy = .82 + Math.sin(time * 1.6) * .18;
+      const telemetryKey = `${terrestrialSample.region}-${waterSample.site}-${hotspotSample.name}-${airSample.location}-${languageSample.language}-${groundSample.region}-${riverSample.river}-${flightSample.corridor}-${biomassSample.ecosystem}-${soilSample.soil}-${karamojaAlphabetData.name}-${turkanaAlphabetData.name}-${samburuAlphabetData.name}-${maasaiAlphabetData.name}-${tesoAlphabetData.name}-${dialectData.name}-${dongiroAlphabetData.name}-${ngatekeraAlphabetData.name}-${regionalLanguageData.length}-${populationMapData.length}`;
+      if (telemetryKey !== encryptedTelemetryKey) {
+        encryptedTelemetryKey = telemetryKey;
+        encryptTelemetry({ terrestrialSample, waterSample, hotspotSample, ionosphereSample, airSample, languageSample, groundSample, riverSample, flightSample, biomassSample, soilSample, regionalLanguageData, populationMapData, karamojaAlphabetData, turkanaAlphabetData, samburuAlphabetData, maasaiAlphabetData, tesoAlphabetData, dialectData, dongiroAlphabetData, njemAlphabetData, jieAlphabetData, ngatekeraAlphabetData, particleSpeeds });
+      }
+      seismicActivity = hotspotSample.seismicity / 10;
+      const magneticSignal = (terrestrialSample.magneticIntensity - 35000) / 30000 * .2 + terrestrialSample.magneticDeclination / 30 * .1;
+      waveHeight = terrestrialSample.waveHeight;
+      wavePeriod = terrestrialSample.wavePeriod;
+      const solarSignal = terrestrialSample.solarAzimuth / 360 * .12 + terrestrialSample.solarAltitude / 90 * .14;
+      const waterSignal = waterSample.recharge / 40 * .08 + waterSample.conductivity / 1500 * .06 - waterSample.groundwaterDepth / 100 * .05;
+      const hotspotSignal = hotspotSample.thermalIndex / 10 * .08 + hotspotSample.seismicity / 10 * .06;
+      const ionosphereSignal = ionosphereSample.criticalFrequency / 25 * .06 + ionosphereSample.layerHeight / 350 * .05 + ionosphereSample.geomagneticIndex / 10 * .05;
+      const airSignal = airSample.aqi / 150 * .06 + airSample.pm25 / 50 * .04 + airSample.no2 / 60 * .03;
+      const groundSignal = groundSample.amplitude / 1000 * .08 + groundSample.wavelength / 30 * .04;
+      const riverSignal = riverSample.discharge / 41000 * .1 + riverSample.length / 7000 * .05;
+      const flightSignal = flightSample.flights / 350 * .06 + flightSample.altitude / 12 * .04 + flightSample.speed / 900 * .03;
+      const biomassSignal = biomassSample.carbonDensity / 350 * .08 + biomassSample.productivity / 16 * .05;
+      const soilSignal = soilSample.moisture / 50 * .05 + soilSample.organicCarbon / 4 * .05 + soilSample.ph / 14 * .03;
+      const goldenSignal = goldenEnergy * .1;
+      const waterQualitySignal = waterSample.wqi / 100 * .08;
+      terrainSignal = terrestrialSample.latitude / 90 * .26 + terrestrialSample.longitude / 180 * .14 + terrestrialSample.elevation / 8849 * .28 + magneticSignal + waveHeight * .04 + solarSignal + waterSignal + hotspotSignal + ionosphereSignal + airSignal + groundSignal + riverSignal + flightSignal + biomassSignal + soilSignal + goldenSignal + waterQualitySignal;
+      terrestrialValue.textContent = terrestrialSample.region;
+      latitudeValue.textContent = terrestrialSample.latitude.toFixed(1);
+      longitudeValue.textContent = terrestrialSample.longitude.toFixed(1);
+      elevationValue.textContent = `${terrestrialSample.elevation} m`;
+      magneticValue.textContent = `${(terrestrialSample.magneticIntensity / 1000).toFixed(1)} uT / ${terrestrialSample.magneticDeclination >= 0 ? '+' : ''}${terrestrialSample.magneticDeclination.toFixed(1)} deg`;
+      waveValue.textContent = `${terrestrialSample.waveHeight.toFixed(1)} m / ${terrestrialSample.wavePeriod.toFixed(1)} s`;
+      solarValue.textContent = `${terrestrialSample.solarAzimuth} deg / ${terrestrialSample.solarAltitude} deg`;
+      moonValue.textContent = `${terrestrialSample.moonAzimuth} deg / ${terrestrialSample.moonAltitude} deg`;
+      waterSiteValue.textContent = `${waterSample.site} / ${waterSample.country}`;
+      groundwaterValue.textContent = `${waterSample.groundwaterDepth} m / ${waterSample.conductivity} uS`;
+      hotspotValue.textContent = `${hotspotSample.name} / ${hotspotSample.thermalIndex.toFixed(1)}`;
+      seismicValue.textContent = `${hotspotSample.seismicity.toFixed(1)} / 10`;
+      ionosphereValue.textContent = `${ionosphereSample.criticalFrequency.toFixed(1)} MHz / ${ionosphereSample.layerHeight} km`;
+      airQualityValue.textContent = `${airSample.location} / AQI ${airSample.aqi}`;
+      languageValue.textContent = `${languageSample.language} / ${languageSample.family}`;
+      alphabetValue.textContent = `LATIN / ${karamojaAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      turkanaAlphabetValue.textContent = `LATIN / ${turkanaAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      samburuAlphabetValue.textContent = `LATIN / ${samburuAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      maasaiAlphabetValue.textContent = `LATIN / ${maasaiAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      tesoAlphabetValue.textContent = `LATIN / ${tesoAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      dialectValue.textContent = `${dialectData.name} / ${dialectData.family.split(' / ')[0]}`;
+      dongiroAlphabetValue.textContent = `LATIN / ${dongiroAlphabetData.letters.split(' ').length} + DIGRAPHS`;
+      ngatekeraAlphabetValue.textContent = `${ngatekeraAlphabetData.letters.length} LETTERS / ${ngatekeraAlphabetData.digraphs.length} DIGRAPHS`;
+      groundFormValue.textContent = groundSample.writtenForm;
+      riverValue.textContent = `${riverSample.river} / ${riverSample.length} km`;
+      flightValue.textContent = `${flightSample.corridor} / ${flightSample.flights}`;
+      biomassValue.textContent = `${biomassSample.ecosystem} / ${biomassSample.carbonDensity} tC`;
+      soilValue.textContent = `${soilSample.soil} / pH ${soilSample.ph.toFixed(1)}`;
+      waterQualityValue.textContent = `WQI ${waterSample.wqi} / ${waterSample.quality}`;
+      goldenValue.textContent = `ABSORBED / ${goldenEnergy.toFixed(2)}`;
+      particleValue.textContent = `RANDOM / ${particleSpeeds.neutron.toLocaleString()} m/s`;
+      motionRateValue.textContent = `LOG10 / ${(1 + Math.log10(1 + Math.max(0, time))).toFixed(2)}x`;
+      const points = pointsFor(dimension).map(project);
+      const graph = points.map((point) => ({ x: centerX + point.x * size, y: centerY + point.y * size, depth: point.depth }));
+
+      context.lineWidth = 1;
+      for (let index = 0; index < graph.length; index++) {
+        for (let axis = 0; axis < dimension; axis++) {
+          const neighbor = index ^ (1 << axis);
+          if (neighbor <= index) continue;
+          const first = graph[index];
+          const second = graph[neighbor];
+          const alpha = .12 + Math.max(first.depth, second.depth) * .18;
+          const seismicHue = 220 - seismicActivity * 220;
+          const hue = (seismicHue + time * 14 + index * 3 + axis * 5) % 360;
+          context.strokeStyle = `hsla(${hue}, 96%, ${58 + seismicActivity * 12}%, ${Math.min(alpha + seismicActivity * .12, .72)})`;
+          context.beginPath();
+          context.moveTo(first.x, first.y);
+          context.lineTo(second.x, second.y);
+          context.stroke();
+        }
+      }
+      graph.forEach((point, index) => {
+        const pulse = 2.3 + Math.sin(time * 3 + index * .37) * .7;
+        const radius = Math.max(1.5, pulse * (.75 + point.depth * .4));
+        const seismicHue = 220 - seismicActivity * 220;
+        const hue = (seismicHue + time * 18 + index * 5) % 360;
+        const color = `hsl(${hue}, 98%, ${58 + seismicActivity * 12}%)`;
+        context.fillStyle = color;
+        context.shadowColor = color;
+        context.shadowBlur = 12;
+        context.beginPath();
+        context.arc(point.x, point.y, radius, 0, Math.PI * 2);
+        context.fill();
+        context.shadowBlur = 0;
+      });
+      drawWebLabel(centerX, centerY, size);
+      drawParticleSecurityField(centerX, centerY, size, elapsed);
+      drawLightningSpark(centerX, centerY, size);
+      drawSun(centerX, centerY, size, terrestrialSample.solarAzimuth, terrestrialSample.solarAltitude);
+      drawMoon(centerX, centerY, size, terrestrialSample.moonAzimuth, terrestrialSample.moonAltitude);
+      drawCrystal(centerX, centerY, size);
+      drawSpaceship(centerX, centerY, size);
+      dimensionValue.textContent = `${String(dimension).padStart(2, '0')}D`;
+      learningValue.textContent = learningRate > 1.18 ? 'FAST ADAPTIVE' : 'ADAPTIVE';
+      timeValue.textContent = time.toFixed(2).padStart(6, '0');
+      timeMeter.style.width = `${40 + (Math.sin(time) + 1) * 28}%`;
+      vertexValue.textContent = String(2 ** dimension);
+      edgeValue.textContent = String(dimension * 2 ** (dimension - 1));
+      requestAnimationFrame(draw);
+    }
+
+    dimensionInput.addEventListener('input', (event) => {
+      dimension = Number(event.target.value);
+      targetLearningRate = 1.2 + (dimension - 3) * .06;
+    });
+    pauseButton.addEventListener('click', () => { paused = !paused; pauseButton.textContent = paused ? 'Resume' : 'Pause'; pauseButton.classList.toggle('active', paused); });
+    resetButton.addEventListener('click', () => { yaw = .55; pitch = -.24; zoom = 1; time = 0; });
+    canvas.addEventListener('pointerdown', (event) => {
+      drag = true;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener('pointermove', (event) => {
+      if (!drag) return;
+      yaw += (event.clientX - lastX) * .008;
+      pitch += (event.clientY - lastY) * .008;
+      targetLearningRate = 1.35;
+      lastX = event.clientX;
+      lastY = event.clientY;
+    });
+    canvas.addEventListener('pointerup', () => { drag = false; });
+    canvas.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      zoom = Math.max(.65, Math.min(1.6, zoom - event.deltaY * .001));
+      targetLearningRate = 1.25;
+    }, { passive: false });
+    window.addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>
